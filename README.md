@@ -5,10 +5,10 @@ gcc tcsh.c -o tcsh <br />
 ./tcsh
 
 ### Some Commands:
-- "bg cmd" to run a process in background, EX: bg sleep 5
-- "processes" to view zombie threads
-- "exit" command exits the shell
-- "< >" redirection supported
+"bg cmd" to run a process in background, EX: bg sleep 5 <br />
+"processes" to view zombie threads<br />
+"exit" command exits the shell<br />
+"< >" redirection supported
 
 ### Limitations & TODO:
 - Help menu for supported commands
