@@ -3,7 +3,7 @@
 __compile__: <br />
 gcc tcsh.c -o tcsh <br />
 ./tcsh
----
+
 ### Some Commands:
 - "bg cmd" to run a process in background, EX: bg sleep 5
 - "processes" to view zombie threads
