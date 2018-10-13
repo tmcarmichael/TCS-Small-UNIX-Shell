@@ -12,6 +12,5 @@
 - Hotkey support
 - History table for commands
 
-![Example](https://github.com/tmcarmichael/TCSH-Small-UNIX-Shell/blob/master/tcsh_ex.png)
-test, github accept raw html?
-<img src="https://github.com/tmcarmichael/TCSH-Small-UNIX-Shell/blob/master/tcsh_ex.png" height="128" width="128">
+### Example:
+<img src="https://github.com/tmcarmichael/TCSH-Small-UNIX-Shell/blob/master/tcsh_ex.png" height="512" width="512">
