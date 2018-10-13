@@ -1,6 +1,7 @@
 ## TCSH - A small UNIX shell written in C.
 
-__compile__: <br />
+#### Compile: 
+<br />
 gcc tcsh.c -o tcsh <br />
 ./tcsh
 
