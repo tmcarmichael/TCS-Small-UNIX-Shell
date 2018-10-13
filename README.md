@@ -1,8 +1,8 @@
 ## TCSH - A small UNIX shell written in C.
 
-compile:
-*gcc tcsh.c -o tcsh*
-*./tcsh*
+__compile__: <br />
+gcc tcsh.c -o tcsh <br />
+./tcsh
 
 ### Some Commands:
 - "bg cmd" to run a process in background, EX: bg sleep 5
