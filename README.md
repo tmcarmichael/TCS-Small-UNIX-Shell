@@ -1,5 +1,7 @@
 ## TCSH - A small UNIX shell written in C.
 
+![Example](https://github.com/tmcarmichael/TCSH-Small-UNIX-Shell/blob/master/tcsh_ex.png)
+
 ### Some Commands:
 - "bg cmd" to run a process in background, EX: bg sleep 5
 - "processes" to view zombie threads
