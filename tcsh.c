@@ -34,7 +34,7 @@ int main() {
   gethostname(hostname, 128);
   getlogin_r(username, 128);
   printf(
-      "\nTMCSH - A small UNIX shell written in C.\n\n\"bg cmd\" to run a "
+      "\nTCSH - A small UNIX shell written in C.\n\n\"bg cmd\" to run a "
       "process "
       "in background, EX: bg sleep 5\n\"processes\" to view zombie "
       "threads\n\"exit\" command exits the shell\n\"< >\" redirection "
