@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <errno.h>
-#include <limits.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -15,15 +14,15 @@
 #define KRED "\x1B[31m"
 #define KNRM "\x1B[0m"
 #define KYEL "\x1B[33m"
-void redirect_forward();   // >
-void redirect_backward();  // <
-void get_processes();             // if processes cmd
-void cd();                        // basic cd
-void execute_normal_process();    // run normal process
-void execute_bg_process();        // run bg process
+void redirect_forward();        // >
+void redirect_backward();       // <
+void get_processes();           // if processes cmd
+void cd();                      // basic cd
+void execute_normal_process();  // run normal process
+void execute_bg_process();      // run bg process
 int process_counter = 0;
 static int bg_process_table[1024] = {};
-static char bg_cmds_table[32][128];  // up to 32 background cmds
+static char bg_cmds_table[32][128];
 static char user_command[1024];
 static char *command_token;
 static char dup_input[1024];
@@ -34,9 +33,9 @@ int main() {
   char username[128];
   gethostname(hostname, 128);
   getlogin_r(username, 128);
-  int background = 0;  // flag or split process fx, 1 if bg
   printf(
-      "TCSH - A small UNIX shell written in C.\n\n\"bg cmd\" to run a process "
+      "\nTMCSH - A small UNIX shell written in C.\n\n\"bg cmd\" to run a "
+      "process "
       "in background, EX: bg sleep 5\n\"processes\" to view zombie "
       "threads\n\"exit\" command exits the shell\n\"< >\" redirection "
       "supported\n\n");
@@ -50,8 +49,7 @@ int main() {
     command_token = strtok(user_command, " )(><&\t\n\r");
     if (!command_token) {
       continue;  // try again fgets for user input
-    }            // now given command, check against posssible values:
-    else if (strcmp(command_token, "exit") == 0) {
+    } else if (strcmp(command_token, "exit") == 0) {
       exit(0);  // exit return code 0 for no errors
     } else if (strcmp(command_token, "processes") == 0) {
       get_processes();
@@ -61,9 +59,7 @@ int main() {
       redirect_forward();
     } else if ((carrot_index = strchr(dup_input, '<'))) {
       redirect_backward();
-    }
-    // next determine regular or background process
-    else {
+    } else { // regular or background process
       if (strcmp(command_token, "bg") == 0) {
         command_token = strtok(NULL, " \t\n()<>|&;");
         execute_bg_process();
@@ -88,25 +84,24 @@ void get_processes() {
 }
 
 void cd() {
-  char *home_path;  // home path is set to return val of getenv("HOME")
+  char *home_path;
   home_path = getenv("HOME");
   command_token = strtok(NULL, " )(><&\t\n\r");
   // two cases: cd or cd path
   // case: "cd"
   if (command_token == NULL) {
     if (chdir(home_path) == -1) {
-      perror("Error");
+      perror("The following error occured");
     }
     return;
   }
   // case: "cd path"
   if (chdir(command_token) == -1) {
-    perror("Error");
+    perror("The following error occured");
   }
 }
 
 void redirect_forward() {
-  char env[64] = "/bin/";
   int status = 0;
   char *args[1024];
   int arg_counter = 0;
@@ -115,7 +110,7 @@ void redirect_forward() {
   // fork
   pid = fork();
   if (pid == -1) {  // fork error
-    perror("Error");
+    perror("The following error occured");
     exit(EXIT_FAILURE);
   }
   // child
@@ -128,13 +123,12 @@ void redirect_forward() {
     }
     file_pointer = freopen(args[arg_counter - 1], "w", stdout);
     if (file_pointer == NULL) {
-      perror("Error");
+      perror("The following error occured");
       return;
     }
     args[arg_counter - 1] = NULL;
-    strcat(env, args[0]);
-    if (execve(env, args, NULL) == -1) {
-      perror("Error");
+    if (execvp(args[0], args) == -1) {
+      perror("The following error occured");
     }
     fclose(file_pointer);
     _exit(0);
@@ -142,7 +136,6 @@ void redirect_forward() {
   // parent
   else {
     waitpid(pid, &status, 0);
-
     if (WIFEXITED(status) == 0) {
       printf("Child didn't exit normally");
     }
@@ -150,7 +143,6 @@ void redirect_forward() {
 }
 
 void redirect_backward() {
-  char env[64] = "/bin/";
   int status = 0;
   char *args[1024];
   int arg_counter = 0;
@@ -159,7 +151,7 @@ void redirect_backward() {
   // fork
   pid = fork();
   if (pid == -1) {
-    perror("Error");
+    perror("The following error occured");
     exit(EXIT_FAILURE);
   }
   // child
@@ -170,17 +162,15 @@ void redirect_backward() {
       arg_counter++;
       args[arg_counter] = command_token;
     }
-    printf("%s", args[arg_counter - 2]);
-    // Second to last token should be file name, redirect output
+    // second to last token should be file name, redirect output
     file_pointer = freopen(args[arg_counter - 2], "w", stdout);
     if (file_pointer == NULL) {
-      perror("Error");
+      perror("The following error occured");
       return;
     }
     args[arg_counter - 1] = NULL;
-    strcat(env, args[0]);
-    if (execve(env, args, NULL) == -1) {
-      perror("Error");
+    if (execvp(args[0], args) == -1) {
+      perror("The following error occured");
     }
     fclose(file_pointer);
     _exit(0);
@@ -195,7 +185,6 @@ void redirect_backward() {
 }
 
 void execute_normal_process() {
-  char env[64] = "/bin/";
   int status = 0;
   char *args[1024];
   int arg_counter = 0;
@@ -203,7 +192,7 @@ void execute_normal_process() {
   // fork
   pid = fork();
   if (pid < 0) {
-    perror("Error");
+    perror("The following error occured");
     exit(EXIT_FAILURE);
   }
   // child
@@ -214,17 +203,14 @@ void execute_normal_process() {
       arg_counter++;
       args[arg_counter] = command_token;
     }
-    strcat(env, args[0]);
-    if (execve(env, args, NULL) == -1) {
-      perror("Error");
+    if (execvp(args[0], args) == -1) {
+      perror("The following error occured");
     }
     _exit(0);
-    // exit(1);
   }
   // parent
   else {
     waitpid(pid, &status, 0);
-    // normal exit if status
     if (WIFEXITED(status) == 0) {
       printf("Child did not exit normally.");
     }
@@ -232,7 +218,6 @@ void execute_normal_process() {
 }
 
 void execute_bg_process() {
-  char env[64] = "/bin/";
   int status = 0;
   char *args[1024];
   args[0] = command_token;
@@ -242,7 +227,7 @@ void execute_bg_process() {
   // fork
   pid = fork();
   if (pid < 0) {
-    perror("Error");
+    perror("The following error occured");
     exit(EXIT_FAILURE);
   }
   // parent
@@ -251,8 +236,6 @@ void execute_bg_process() {
     strcpy(bg_cmds_table[process_counter], args[0]);
     printf("Added Background Process: %d ", bg_process_table[process_counter]);
     printf("%s\n", bg_cmds_table[process_counter]);
-    // printf("%d\n", pid);
-    // printf("%d\n", process_counter);
     process_counter++;
   }
   // child
@@ -266,12 +249,10 @@ void execute_bg_process() {
     // close stdout and stderr to child of bg process
     fclose(stdout);
     fclose(stderr);
-    strcat(env, args[0]);
-    if (execve(env, args, NULL) == -1) {
-      perror("Error");
+    if (execvp(args[0], args) == -1) {
+      perror("The following error occured");
     }
     _exit(0);
-    // exit(1);
   }
   // parent
   waitpid(-1, &status, WNOHANG);
