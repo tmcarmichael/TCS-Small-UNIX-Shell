@@ -1,4 +1,4 @@
-## TCSH - A small UNIX shell written in C.
+## TCS - A small UNIX shell written in C.
 
 #### Compile: <br />
 gcc tcsh.c -o tcsh <br />
